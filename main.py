@@ -7,6 +7,21 @@ from settings import *
 from sprites import *
 from os import path
 
+
+#Add a math function to round down the clock
+from math import floor
+
+#Add a cooldown class to control time
+class Cooldown():
+    #set all properties to zero when instantiated
+    def __init__(self):
+        #setting game clock
+        self.clock = pg.time.Clock
+        self.load_data()
+        #added images folder and image in the load_data method for use with player
+	
+
+
 #Initalize a class
 class Game:
     def __init__(self):
@@ -19,6 +34,8 @@ class Game:
          # load save game data etc
     def load_data(self):
         game_folder = path.dirname(__file__)
+        img_folder = path.join(game_folder, 'images')
+        self.player_img = pg.image.load(path.join(img_folder, 'saitama.png')).convert_alpha()
         self.map_data = []
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:

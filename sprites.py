@@ -7,18 +7,21 @@ from settings import *
 
 # create a player class
 
-class Player(Sprite):
-    # create init method / function to assign properties
+class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
-        Sprite.__init__(self, self.groups)
+        # init super class
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(YELLOW)
+        # self.image = pg.Surface((TILESIZE, TILESIZE))
+        # added player image to sprite from the game class
+        self.image = game.player_img
+        # self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
         self.y = y * TILESIZE
+
 
     # def move(self, dx=0, dy = 0):
     # self.x += dx
@@ -67,7 +70,7 @@ class Player(Sprite):
         if hits and desc == "coin":
             self.image.fill(YELLOW)
 
-    def collide_with_enemy(self, group, kill, desc):
+    #def collide_with_enemy(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "enemy":
             self.image.fill(YELLOW)
@@ -90,7 +93,7 @@ class Player(Sprite):
         self.collide_with_obj(self.game.coins, True, "coin")
         self.rect.width = self.rect.width
         self.rect.height = self.rect.height
-        self.collide_with_enemy(self.game.enemy, True, "enemy")
+        #self.collide_with_enemy(self.game.enemy, True, "enemy")
         
 
 # create a wall class
