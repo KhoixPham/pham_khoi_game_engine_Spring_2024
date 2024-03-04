@@ -7,6 +7,10 @@ from settings import *
 from sprites import *
 from os import path
 
+# Three things I want to add:
+# Projectiles / bullets
+# Which comes with weapons (Bows, sword, and possibly a gun)
+# Aim with crosshair
 
 #Add a math function to round down the clock
 from math import floor
