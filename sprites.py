@@ -65,15 +65,23 @@ class Player(pg.sprite.Sprite):
                 self.vy = 0
                 self.rect.y = self.y
 
+# FROM MR. COZORT's CODE
     def collide_with_obj(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
-        if hits and desc == "coin":
-            self.image.fill(YELLOW)
+        if hits:
+            if str(hits[0].__class__.__name__) == "Coin": 
+                print("I got a coin")
 
-    #def collide_with_enemy(self, group, kill, desc):
+
+            #if hits
+        
+        #if hits and desc == "coin":
+            #self.rect = self.image.get_rect()
+
+    def collide_with_enemy(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "enemy":
-            self.image.fill(YELLOW)
+            self.rect = self.image.get_rect()
 
 
  
@@ -93,7 +101,7 @@ class Player(pg.sprite.Sprite):
         self.collide_with_obj(self.game.coins, True, "coin")
         self.rect.width = self.rect.width
         self.rect.height = self.rect.height
-        #self.collide_with_enemy(self.game.enemy, True, "enemy")
+        self.collide_with_enemy(self.game.enemy, True, "enemy")
         
 
 # create a wall class
@@ -186,7 +194,7 @@ class Enemy(Sprite):
 def collide_with_enemy(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "player":
-            self.image.fill(PURPLE)
+            self.rect == self.image.get_rect()
    
 
         
