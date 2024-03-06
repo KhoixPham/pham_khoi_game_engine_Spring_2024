@@ -145,7 +145,7 @@ class Enemy(Sprite):
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
         self.x = x * TILESIZE
-        self.y = x * TILESIZE
+        self.y = y * TILESIZE
         self.vx = ENEMY_SPEED
         self.vy = ENEMY_SPEED
     
@@ -179,13 +179,13 @@ class Enemy(Sprite):
         #Follow player
 
         if self.rect.x < self.game.player.rect.x: #If player x is left, follow it.
-            self.vx = 300
+            self.vx = 200
         if self.rect.x > self.game.player.rect.x:
-            self.vx = -300    
+            self.vx = -200    
         if self.rect.y < self.game.player.rect.y:
-            self.vy = 300
+            self.vy = 200
         if self.rect.y > self.game.player.rect.y:
-            self.vy = -300
+            self.vy = -200
         self.rect.x = self.x
         self.collide_with_walls('x')
         self.rect.y = self.y
