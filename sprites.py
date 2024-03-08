@@ -140,7 +140,8 @@ class Enemy(Sprite):
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(PURPLE)
+      # self.image.fill(PURPLE)
+        self.image = game.enemy_img
         self.rect = self.image.get_rect()
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
@@ -149,52 +150,67 @@ class Enemy(Sprite):
         self.vx = ENEMY_SPEED
         self.vy = ENEMY_SPEED
     
-    #Collision
     def collide_with_walls(self, dir):
         if dir == 'x':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
             if hits:
                 if self.vx > 0:
-                    self.x = hits[0].rect.left - self.rect.width
+                    self.rect.right = hits[0].rect.left
                 if self.vx < 0:
-                    self.x = hits[0].rect.right
-                self.vx = 0
-                self.rect.x = self.x
+                    self.rect.left = hits[0].rect.right
+                self.vx = -self.vx  # Reverse the direction
         if dir == 'y':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
             if hits:
                 if self.vy > 0:
-                    self.y = hits[0].rect.top - self.rect.height
+                    self.rect.bottom = hits[0].rect.top
                 if self.vy < 0:
-                    self.y = hits[0].rect.bottom
-                self.vy = 0
-                self.rect.y = self.y
-                
-     
+                    self.rect.top = hits[0].rect.bottom
+                self.vy = -self.vy  # Reverse the direction
+
     def update(self):
-        # self.rect.x += 1
-        self.x += self.vx * self.game.dt
-        self.y += self.vy * self.game.dt
+        # Store the current position (rect)
+        current_rect = self.rect.copy()
 
-        #Follow player
+        # Update position based on velocity
+        self.rect.x += self.vx * self.game.dt
+        self.rect.y += self.vy * self.game.dt
 
-        if self.rect.x < self.game.player.rect.x: #If player x is left, follow it.
+        # Check for collision with other enemies
+        enemy_collisions = pg.sprite.spritecollide(self, self.groups[1], False)
+        for enemy in enemy_collisions:
+            if enemy != self:
+                # Revert to previous position
+                self.rect = current_rect
+                self.vx = -self.vx
+                self.vy = -self.vy
+
+        # Follow player | From Mr. Cozort
+        if self.rect.x < self.game.player.rect.x:
             self.vx = 200
-        if self.rect.x > self.game.player.rect.x:
-            self.vx = -200    
+        elif self.rect.x > self.game.player.rect.x:
+            self.vx = -200
+        else:
+            self.vx = 0
+
         if self.rect.y < self.game.player.rect.y:
             self.vy = 200
-        if self.rect.y > self.game.player.rect.y:
+        elif self.rect.y > self.game.player.rect.y:
             self.vy = -200
-        self.rect.x = self.x
-        self.collide_with_walls('x')
-        self.rect.y = self.y
-        self.collide_with_walls('y')
+        else:
+            self.vy = 0
 
-def collide_with_enemy(self, group, kill, desc):
-        hits = pg.sprite.spritecollide(self, group, kill)
-        if hits and desc == "player":
-            self.rect == self.image.get_rect()
+        # Apply wall collision
+        self.collide_with_walls('x')
+        self.collide_with_walls('y')
+        # self.collide_with_eachother(self.game.enemy, 'enemy')
+        
+
+
+# def collide_with_enemy(self, group, kill, desc):
+#         hits = pg.sprite.spritecollide(self, group, kill)
+#         if hits and desc == "enemy":
+#             self.rect == self.image.get_rect()
    
 
         
