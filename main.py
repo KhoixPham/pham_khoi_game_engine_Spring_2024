@@ -41,11 +41,12 @@ class Game:
         img_folder = path.join(game_folder, 'images')
         self.player_img = pg.image.load(path.join(img_folder, 'saitama.png')).convert_alpha()
         self.enemy_img = pg.image.load(path.join(img_folder, 'garou.png')).convert_alpha()
+        self.coin_img = pg.image.load(path.join(img_folder, 'coin.png')).convert_alpha()
         self.map_data = []
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
                 self.map_data.append(line)
-
+ 
     def new(self):
             #init all variables, setup groups, instantiate classes
         self.all_sprites = pg.sprite.Group()

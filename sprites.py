@@ -2,7 +2,7 @@
 
 # import modules
 import pygame as pg
-from pygame.sprite import Sprite
+from pygame.sprite import Group, Sprite
 from settings import *
 
 # create a player class
@@ -21,6 +21,16 @@ class Player(pg.sprite.Sprite):
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
         self.y = y * TILESIZE
+        self.hitpoints = 100 #use this later
+        self.bullets = pg.sprite.Group()
+
+    def shoot(self):
+        keys = pg.key.get_pressed()
+        if keys [pg.K_SPACE]:
+            bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'up')  # Adjust direction as needed
+            self.game.all_sprites.add(bullet)
+            self.bullets.add(bullet)
+            print("shot's fired")
 
 
     # def move(self, dx=0, dy = 0):
@@ -82,7 +92,11 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "enemy":
             self.rect = self.image.get_rect()
+            print("sobad")
 
+    def shoot_bullet(self):
+    #     # draw bullets when click space
+        pass     
 
  
 
@@ -102,6 +116,7 @@ class Player(pg.sprite.Sprite):
         self.rect.width = self.rect.width
         self.rect.height = self.rect.height
         self.collide_with_enemy(self.game.enemy, True, "enemy")
+        self.shoot()
         
 
 # create a wall class
@@ -128,6 +143,8 @@ class Coin(Sprite):
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
         self.image.fill(RED)
+        # self.rect = self.image.get_rect()
+        self.image = game.coin_img
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -185,24 +202,24 @@ class Enemy(Sprite):
                 self.vx = -self.vx
                 self.vy = -self.vy
 
-        # Follow player | From Mr. Cozort
+        # Follow player | Mr. Cozort
         if self.rect.x < self.game.player.rect.x:
-            self.vx = 200
+            self.vx = ENEMY_SPEED
         elif self.rect.x > self.game.player.rect.x:
-            self.vx = -200
+            self.vx = -ENEMY_SPEED
         else:
             self.vx = 0
 
         if self.rect.y < self.game.player.rect.y:
-            self.vy = 200
+            self.vy = ENEMY_SPEED
         elif self.rect.y > self.game.player.rect.y:
-            self.vy = -200
+            self.vy = -ENEMY_SPEED
         else:
             self.vy = 0
 
         # Apply wall collision
-        self.collide_with_walls('x')
-        self.collide_with_walls('y')
+        # self.collide_with_walls('x')
+        # self.collide_with_walls('y')
         # self.collide_with_eachother(self.game.enemy, 'enemy')
         
 
@@ -213,5 +230,26 @@ class Enemy(Sprite):
 #             self.rect == self.image.get_rect()
    
 
+#Making bullets
+class Bullet(Sprite):
+    def __init__(self, game, x, y , direction):
+        super().__init__() # super allows access to methods and properties of a parent or sibling class
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill((YELLOW))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.speed = 5
+        self.direction = direction #gives direction
         
-        
+    
+
+    def update(self):
+        if self.direction == 'up':
+            self.rect.y -= self.speed
+        elif self.direction == 'down':
+            self.rect.y += self.speed
+        elif self.direction == 'left':
+            self.rect.x -= self.speed
+        elif self.direction == 'right':
+            self.rect.x += self.speed
