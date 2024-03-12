@@ -26,6 +26,7 @@ class Player(pg.sprite.Sprite):
 
     def shoot(self):
         #shoot in the direction Player is facing
+        
         keys = pg.key.get_pressed()
         if keys [pg.K_SPACE]:
             if self.vx > 0:
@@ -33,17 +34,18 @@ class Player(pg.sprite.Sprite):
                 self.game.all_sprites.add(bullet)
                 self.bullets.add(bullet)
             if self.vx < 0:
-                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'left')  # Adjust direction as needed
+                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'left')  
                 self.game.all_sprites.add(bullet)
                 self.bullets.add(bullet)
             if self.vy > 0:
-                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'down')  # Adjust direction as needed
+                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'down')  
                 self.game.all_sprites.add(bullet)
                 self.bullets.add(bullet)
             if self.vy < 0:
-                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'up')  # Adjust direction as needed
+                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'up')  
                 self.game.all_sprites.add(bullet)
                 self.bullets.add(bullet)
+            
             
 
 
@@ -106,7 +108,6 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "enemy":
             self.rect = self.image.get_rect()
-            print("sobad")
 
 
  
@@ -129,8 +130,8 @@ class Player(pg.sprite.Sprite):
         self.collide_with_enemy(self.game.enemy, True, "enemy")
         self.shoot()
         
-
-# create a wall class
+#------------------------------------------------------------------------
+    # CREATE A WALL CLASS
 
 class Wall(Sprite):
     # create init method for Wall
@@ -146,6 +147,10 @@ class Wall(Sprite):
         self.y = y
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
+
+#------------------------------------------------------------------------
+        #CREATE A COIN CLASS
+
 class Coin(Sprite):
     # create init method for Wall
     def __init__(self, game, x, y):
@@ -162,6 +167,9 @@ class Coin(Sprite):
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
 
+#-------------------------------------------------------------------
+        #Create an Enemy Class
+        
 class Enemy(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.enemy
@@ -178,6 +186,7 @@ class Enemy(Sprite):
         self.vx = ENEMY_SPEED
         self.vy = ENEMY_SPEED
     
+    #Collision with walls
     def collide_with_walls(self, dir):
         if dir == 'x':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
@@ -229,8 +238,8 @@ class Enemy(Sprite):
             self.vy = 0
 
         # Apply wall collision
-        # self.collide_with_walls('x')
-        # self.collide_with_walls('y')
+        self.collide_with_walls('x')
+        self.collide_with_walls('y')
         # self.collide_with_eachother(self.game.enemy, 'enemy')
         
 
@@ -252,16 +261,22 @@ class Bullet(Sprite):
         self.rect.center = (x, y)
         self.speed = 5
         self.direction = direction #gives direction
-        
+    
+    #Make bullets kill enemies
+    def collide_with_enemy(self, group, kill, desc):
+        hits = pg.sprite.spritecollide(self, group, kill)
+        if hits and desc == "enemy":
+            self.rect = self.image.get_rect()
     
 
     def update(self):
         if self.direction == 'up':
             self.rect.y -= self.speed
-        elif self.direction == 'down':
+        if self.direction == 'down':
             self.rect.y += self.speed
-        elif self.direction == 'left':
+        if self.direction == 'left':
             self.rect.x -= self.speed
-        elif self.direction == 'right':
+        if self.direction == 'right':
             self.rect.x += self.speed
+        self.collide_with_enemy(self.game.enemy, True, 'enemy')
             

@@ -79,6 +79,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
+            
     def quit(self):
         pg.quit()
         sys.exit()
