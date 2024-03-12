@@ -25,12 +25,26 @@ class Player(pg.sprite.Sprite):
         self.bullets = pg.sprite.Group()
 
     def shoot(self):
+        #shoot in the direction Player is facing
         keys = pg.key.get_pressed()
         if keys [pg.K_SPACE]:
-            bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'up')  # Adjust direction as needed
-            self.game.all_sprites.add(bullet)
-            self.bullets.add(bullet)
-            print("shot's fired")
+            if self.vx > 0:
+                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'right')  # Adjust direction as needed
+                self.game.all_sprites.add(bullet)
+                self.bullets.add(bullet)
+            if self.vx < 0:
+                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'left')  # Adjust direction as needed
+                self.game.all_sprites.add(bullet)
+                self.bullets.add(bullet)
+            if self.vy > 0:
+                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'down')  # Adjust direction as needed
+                self.game.all_sprites.add(bullet)
+                self.bullets.add(bullet)
+            if self.vy < 0:
+                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'up')  # Adjust direction as needed
+                self.game.all_sprites.add(bullet)
+                self.bullets.add(bullet)
+            
 
 
     # def move(self, dx=0, dy = 0):
@@ -94,9 +108,6 @@ class Player(pg.sprite.Sprite):
             self.rect = self.image.get_rect()
             print("sobad")
 
-    def shoot_bullet(self):
-    #     # draw bullets when click space
-        pass     
 
  
 
@@ -235,7 +246,7 @@ class Bullet(Sprite):
     def __init__(self, game, x, y , direction):
         super().__init__() # super allows access to methods and properties of a parent or sibling class
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image = pg.Surface((16, 16))
         self.image.fill((YELLOW))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -253,3 +264,4 @@ class Bullet(Sprite):
             self.rect.x -= self.speed
         elif self.direction == 'right':
             self.rect.x += self.speed
+            
