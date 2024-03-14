@@ -17,34 +17,55 @@ class Player(pg.sprite.Sprite):
         # added player image to sprite from the game class
         self.image = game.player_img
         # self.image.fill(YELLOW)
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect(center=(x,y))
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.hitpoints = 100 #use this later
         self.bullets = pg.sprite.Group()
+        self.rect.center = (x,y)
 
-    def shoot(self):
+    # def events(self):
+    #     for event in pg.event.get():
+    #         if event.type == pg.MOUSEBUTTONDOWN:
+    #             x,y = pg.mouse.get_pos()
+    #             bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'right')  # Adjust direction as needed
+    #             self.game.all_sprites.add(bullet)
+    #             self.bullets.add(bullet)
+    #             bullets.append(bullet)
+    #             pg.time.set_timer(pg.USEREVENT+1)
+
+        
+
+    # def shoot(self):
+    #     if pg.MOUSEBUTTONDOWN:
+    #         bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'right')  # Adjust direction as needed
+    #         self.game.all_sprites.add(bullet)
+    #         self.bullets.add(bullet)
+    #         bullets.append(bullet)
+        #shoot with mouse
+
         #shoot in the direction Player is facing
         
-        keys = pg.key.get_pressed()
-        if keys [pg.K_SPACE]:
-            if self.vx > 0:
-                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'right')  # Adjust direction as needed
-                self.game.all_sprites.add(bullet)
-                self.bullets.add(bullet)
-            if self.vx < 0:
-                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'left')  
-                self.game.all_sprites.add(bullet)
-                self.bullets.add(bullet)
-            if self.vy > 0:
-                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'down')  
-                self.game.all_sprites.add(bullet)
-                self.bullets.add(bullet)
-            if self.vy < 0:
-                bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'up')  
-                self.game.all_sprites.add(bullet)
-                self.bullets.add(bullet)
+        # keys = pg.key.get_pressed()
+        # if keys [pg.K_SPACE]:
+        #     if self.vx > 0:
+        #         bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'right')  # Adjust direction as needed
+        #         self.game.all_sprites.add(bullet)
+        #         self.bullets.add(bullet)
+        #     if self.vx < 0:
+        #         bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'left')  
+        #         self.game.all_sprites.add(bullet)
+        #         self.bullets.add(bullet)
+        #     if self.vy > 0:
+        #         bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'down')  
+        #         self.game.all_sprites.add(bullet)
+        #         self.bullets.add(bullet)
+        #     if self.vy < 0:
+        #         bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, 'up')  
+        #         self.game.all_sprites.add(bullet)
+        #         self.bullets.add(bullet)
+        #         bullets.append(bullet)
             
             
 
@@ -53,7 +74,7 @@ class Player(pg.sprite.Sprite):
     # self.x += dx
         #self. y +=dy
     
-    # MOVEMENT with WASD
+    # MOVEMENT with WASD and get Mouse Position
     def get_keys(self):
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
@@ -68,6 +89,7 @@ class Player(pg.sprite.Sprite):
         if self.vx != 0 and self.vy !=0:
             self.vx *= 0.7071
             self.vy *= 0.7071
+
     
 
     # COLLISION       
@@ -128,7 +150,6 @@ class Player(pg.sprite.Sprite):
         self.rect.width = self.rect.width
         self.rect.height = self.rect.height
         self.collide_with_enemy(self.game.enemy, True, "enemy")
-        self.shoot()
         
 #------------------------------------------------------------------------
     # CREATE A WALL CLASS
@@ -249,7 +270,8 @@ class Enemy(Sprite):
 #         if hits and desc == "enemy":
 #             self.rect == self.image.get_rect()
    
-
+#-------------------------------------------------------------------
+        
 #Making bullets
 class Bullet(Sprite):
     def __init__(self, game, x, y , direction):
@@ -261,7 +283,7 @@ class Bullet(Sprite):
         self.rect.center = (x, y)
         self.speed = 5
         self.direction = direction #gives direction
-    
+
     #Make bullets kill enemies
     def collide_with_enemy(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
@@ -279,4 +301,3 @@ class Bullet(Sprite):
         if self.direction == 'right':
             self.rect.x += self.speed
         self.collide_with_enemy(self.game.enemy, True, 'enemy')
-            

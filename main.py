@@ -65,7 +65,7 @@ class Game:
                 if tile == '1':
                     Wall(self, col, row)
                 if tile == 'P': 
-                    self.player = Player(self, col, row)
+                    self.player = Player(self, col, row,)
                 if tile == 'U':
                     self.player = Coin(self, col, row)
                 if tile == 'E':
@@ -106,6 +106,14 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
+            if event.type == pg.MOUSEBUTTONDOWN:
+                x,y = pg.mouse.get_pos()
+                bullet = Bullet(self.player.game, self.player.rect.centerx, self.player.rect.centery, 'right')  # Adjust direction as needed
+                self.player.game.all_sprites.add(bullet)
+                self.player.bullets.add(bullet)
+                bullets.append(bullet)
+                
+               
             # if event.type == pg.KEYDOWN:
             #     if event.key == pg.K_LEFT:
             #         self.player.move(dx=-1)
