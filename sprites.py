@@ -4,6 +4,7 @@
 import pygame as pg
 from pygame.sprite import Group, Sprite
 from settings import *
+import math
 
 # create a player class
 
@@ -273,16 +274,31 @@ class Enemy(Sprite):
 #-------------------------------------------------------------------
         
 #Making bullets
-class Bullet(Sprite):
-    def __init__(self, game, x, y , direction):
-        super().__init__() # super allows access to methods and properties of a parent or sibling class
+#  # https://www.youtube.com/watch?v=3DeW-7vbc50&list=LL&index=2&t=887s
+class Bullet(Player):
+    def __init__(self, game, x, y, targetx, targety, speed):
+        super().__init__(game, x, y) # super allows access to methods and properties of a parent or sibling class
         self.game = game
         self.image = pg.Surface((16, 16))
         self.image.fill((YELLOW))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.speed = 5
-        self.direction = direction #gives direction
+        angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x)
+        print('Angle in degrees:', angle*180/math.pi)
+        self.dx = math.cos(angle) * speed
+        self.dy = math.sin(angle) * speed
+        self.x = x
+        self.y = y
+    
+    #movement with bullet
+    def move(self):
+        # self.x and self.y are floats (decimals), i get better accuracy
+        self.x = self.x + self.dx
+        self.y = self.y + self.dy
+
+        self.rect.x = int(self.x)
+        self.rect.y = int(self.y)
+
 
     #Make bullets kill enemies
     def collide_with_enemy(self, group, kill, desc):
@@ -292,12 +308,7 @@ class Bullet(Sprite):
     
 
     def update(self):
-        if self.direction == 'up':
-            self.rect.y -= self.speed
-        if self.direction == 'down':
-            self.rect.y += self.speed
-        if self.direction == 'left':
-            self.rect.x -= self.speed
-        if self.direction == 'right':
-            self.rect.x += self.speed
+        # self.rect.x += self.dx
+        # self.rect.y += self.dy
+        self.move()
         self.collide_with_enemy(self.game.enemy, True, 'enemy')

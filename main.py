@@ -20,10 +20,16 @@ class Cooldown():
     #set all properties to zero when instantiated
     def __init__(self):
         #setting game clock
+        self.current_time = 0
+        self.event_time = 0
+        self.delta = 0
         self.clock = pg.time.Clock
         self.load_data()
         #added images folder and image in the load_data method for use with player
-	
+    def ticking(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
+        self.delta = self.current_time - self.event_time
+    
 
 
 #Initalize a class
@@ -108,10 +114,11 @@ class Game:
                 self.quit()
             if event.type == pg.MOUSEBUTTONDOWN:
                 x,y = pg.mouse.get_pos()
-                bullet = Bullet(self.player.game, self.player.rect.centerx, self.player.rect.centery, 'right')  # Adjust direction as needed
+                bullet = Bullet(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 5)  # Adjust direction as needed
                 self.player.game.all_sprites.add(bullet)
                 self.player.bullets.add(bullet)
                 bullets.append(bullet)
+    
                 
                
             # if event.type == pg.KEYDOWN:
