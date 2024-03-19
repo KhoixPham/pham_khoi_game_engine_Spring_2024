@@ -9,27 +9,11 @@ from os import path
 
 # Three things I want to add:
 # Projectiles / bullets
-# Which comes with weapons (Bows, sword, and possibly a gun)
+# ENdless survival
 # Aim with crosshair
 
 #Add a math function to round down the clock
 from math import floor
-
-#Add a cooldown class to control time
-class Cooldown():
-    #set all properties to zero when instantiated
-    def __init__(self):
-        #setting game clock
-        self.current_time = 0
-        self.event_time = 0
-        self.delta = 0
-        self.clock = pg.time.Clock
-        self.load_data()
-        #added images folder and image in the load_data method for use with player
-    def ticking(self):
-        self.current_time = floor((pg.time.get_ticks())/1000)
-        self.delta = self.current_time - self.event_time
-    
 
 
 #Initalize a class
@@ -73,9 +57,9 @@ class Game:
                 if tile == 'P': 
                     self.player = Player(self, col, row,)
                 if tile == 'U':
-                    self.player = Coin(self, col, row)
+                    Coin(self, col, row)
                 if tile == 'E':
-                    self.player = Enemy(self, col, row)
+                    Enemy(self, col, row)
             
     # DEFINE THE RUN METHOD            
     def run(self):
@@ -138,6 +122,7 @@ class Game:
             #         self.player.move(dy=-1)
             #     if event.key == pg.K_s:
             #         self.player.move (dy=1)
+    
 
     def show_start_screen(self):
         pass
