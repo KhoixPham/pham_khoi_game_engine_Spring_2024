@@ -24,13 +24,11 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
-        self.all_sprites = pg.sprite.Group()
-        self.enemy = pg.sprite.Group()
         pg.key.set_repeat(300, 100)
         self.load_data()
-        self.wave_counter = 1
-        self.enemy_spawned = 0
-        self.new_wave()
+        self.wave_counter = 0 #this marks our initial value | allows the 'Game' object to have attribute to wave_counter
+        self.enemy_spawned = 0 #game starts with 0 enemies
+
          # load save game data etc
     def load_data(self):
         game_folder = path.dirname(__file__)
@@ -43,13 +41,15 @@ class Game:
             for line in f:
                 self.map_data.append(line)
     
+# def new_wave is from AI
+# My own Comments
     def new_wave(self):
-        self.wave_counter += 1
-        for _ in range(5):
+        self.wave_counter += 1 # += operator makes it easier to add a value to an existing variable
+        num_enemies_to_spawn = 1 + (self.wave_counter - 1) * 1 # add one extra enemy per wave
+        for _ in range(num_enemies_to_spawn): #spawns the enemy
             x = random.randint(0, 64 - TILESIZE)
             y = random.randint(0, 56 - TILESIZE)
-            Enemy(self, x, y)
-        self.enemy_spawned = 0
+            Enemy(self, x, y) # giving x and y the value to the enemy that is spawned
         
  
     def new(self):
@@ -91,9 +91,10 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
-        if len(self.enemy) == 0:
-            self.enemy_spawned += 1
-            if self.enemy_spawned >= 5:
+        #AI | My comments
+        if len(self.enemy) == 0: #Says to the game to check if every enemy is dead
+            self.enemy_spawned += 1 #spawns the enemy
+            if self.enemy_spawned >= 1:
                 self.new_wave()
         
     #DRAW GRID
@@ -106,8 +107,8 @@ class Game:
     #Draw text
     def draw_text(self):
         font = pg.font.Font(None, 36)
-        wave_text = font.render(f"Wave: {self.wave_counter}", True, YELLOW)
-        self.screen.blit(wave_text, (83,84))
+        wave_text = font.render(f"Wave: {self.wave_counter}", True, YELLOW) # the f is called an f-string | this displays self.wave_counter and its value after evaluation
+        self.screen.blit(wave_text, (83,84)) #draws the text at specific coordinate
 
     #Define the draw method / OUTPUT
     def draw(self):
@@ -128,7 +129,7 @@ class Game:
                 bullet = Bullet(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 5)  # Adjust direction as needed
                 self.player.game.all_sprites.add(bullet)
                 self.player.bullets.add(bullet)
-                bullets.append(bullet)
+                bullets.append(bullet) #stores the bullet in a list | a list store multiple items in a single variable
     
                 
                

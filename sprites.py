@@ -283,7 +283,7 @@ class Bullet(Player):
         self.image.fill((YELLOW))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x)
+        angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
         print('Angle in degrees:', angle*180/math.pi)
         self.dx = math.cos(angle) * speed
         self.dy = math.sin(angle) * speed
@@ -293,12 +293,16 @@ class Bullet(Player):
     #movement with bullet
     def move(self):
         # self.x and self.y are floats (decimals), i get better accuracy
+        #IF I change self.x and and then convert them into integers for the rectangle
         self.x = self.x + self.dx
         self.y = self.y + self.dy
 
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
 
+        #Previous
+        #self.rect.x = self.rect.x + int(self.dx)
+        #self.rect.y = self.rect.x + int(self.dy)
 
     #Make bullets kill enemies
     def collide_with_enemy(self, group, kill, desc):
