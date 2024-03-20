@@ -6,6 +6,7 @@ import sys
 from settings import *
 from sprites import *
 from os import path
+import random
 
 # Three things I want to add:
 # Projectiles / bullets
@@ -23,9 +24,13 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
+        self.all_sprites = pg.sprite.Group()
+        self.enemy = pg.sprite.Group()
         pg.key.set_repeat(300, 100)
         self.load_data()
         self.wave_counter = 1
+        self.enemy_spawned = 0
+        self.new_wave()
          # load save game data etc
     def load_data(self):
         game_folder = path.dirname(__file__)
@@ -37,6 +42,15 @@ class Game:
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
                 self.map_data.append(line)
+    
+    def new_wave(self):
+        self.wave_counter += 1
+        for _ in range(5):
+            x = random.randint(0, 64 - TILESIZE)
+            y = random.randint(0, 56 - TILESIZE)
+            Enemy(self, x, y)
+        self.enemy_spawned = 0
+        
  
     def new(self):
             #init all variables, setup groups, instantiate classes
@@ -77,6 +91,10 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
+        if len(self.enemy) == 0:
+            self.enemy_spawned += 1
+            if self.enemy_spawned >= 5:
+                self.new_wave()
         
     #DRAW GRID
     def draw_grid(self):

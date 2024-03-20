@@ -209,15 +209,15 @@ class Enemy(Sprite):
         self.vy = ENEMY_SPEED
     
     #Collision with walls
-    def collide_with_walls(self, dir):
-        if dir == 'x':
-            hits = pg.sprite.spritecollide(self, self.game.walls, False)
-            if hits:
-                if self.vx > 0:
-                    self.rect.right = hits[0].rect.left
-                if self.vx < 0:
-                    self.rect.left = hits[0].rect.right
-                self.vx = -self.vx  # Reverse the direction
+    # def collide_with_walls(self, dir):
+    #     if dir == 'x':
+    #         hits = pg.sprite.spritecollide(self, self.game.walls, False)
+    #         if hits:
+    #             if self.vx > 0:
+    #                 self.rect.right = hits[0].rect.left
+    #             if self.vx < 0:
+    #                 self.rect.left = hits[0].rect.right
+    #             self.vx = -self.vx  # Reverse the direction
         if dir == 'y':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
             if hits:
@@ -260,8 +260,8 @@ class Enemy(Sprite):
             self.vy = 0
 
         # Apply wall collision
-        self.collide_with_walls('x')
-        self.collide_with_walls('y')
+        # self.collide_with_walls('x')
+        # self.collide_with_walls('y')
         # self.collide_with_eachother(self.game.enemy, 'enemy')
         
 
