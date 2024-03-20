@@ -25,6 +25,7 @@ class Game:
         self.clock = pg.time.Clock()
         pg.key.set_repeat(300, 100)
         self.load_data()
+        self.wave_counter = 1
          # load save game data etc
     def load_data(self):
         game_folder = path.dirname(__file__)
@@ -83,12 +84,19 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
         for y in range(0, WIDTH, TILESIZE):
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
+    
+    #Draw text
+    def draw_text(self):
+        font = pg.font.Font(None, 36)
+        wave_text = font.render(f"Wave: {self.wave_counter}", True, YELLOW)
+        self.screen.blit(wave_text, (83,84))
 
     #Define the draw method / OUTPUT
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
+        self.draw_text()
         pg.display.flip()
 
  # User input from keyboard                  
@@ -98,6 +106,7 @@ class Game:
                 self.quit()
             if event.type == pg.MOUSEBUTTONDOWN:
                 x,y = pg.mouse.get_pos()
+                print (x,y)
                 bullet = Bullet(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 5)  # Adjust direction as needed
                 self.player.game.all_sprites.add(bullet)
                 self.player.bullets.add(bullet)
