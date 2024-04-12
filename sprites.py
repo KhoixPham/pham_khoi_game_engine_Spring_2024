@@ -5,8 +5,25 @@ import pygame as pg
 from pygame.sprite import Group, Sprite
 from settings import *
 import math
+from os import path
 
+SPRITESHEET = "theBell.png"
+game_folder = path.dirname(__file__)
+img_folder = path.join(game_folder, 'images')
 # create a player class
+
+class Spritesheet:
+    # utility class for loading and parsing spritesheets
+    def __init__(self, filename):
+        self.spritesheet = pg.image.load(filename).convert()
+
+    def get_image(self, x, y, width, height):
+        # grab an image out of a larger spritesheet
+        image = pg.Surface((width, height))
+        image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        # image = pg.transform.scale(image, (width, height))
+        image = pg.transform.scale(image, (width * 1, height * 1))
+        return image
 
 class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -16,15 +33,52 @@ class Player(pg.sprite.Sprite):
         self.game = game
         # self.image = pg.Surface((TILESIZE, TILESIZE))
         # added player image to sprite from the game class
-        self.image = game.player_img
+        #self.image = game.player_img
         # self.image.fill(YELLOW)
+        self.spritesheet = Spritesheet(path.join(img_folder, SPRITESHEET))
+        self.load_images()
+        self.image = self.standing_frames[0]
         self.rect = self.image.get_rect(center=(x,y))
         self.vx, self.vy = 0, 0
+        self.current_frame = 0
+        self.last_update = 0
+        self.material = True
+        self.jumping = False
+        # needed for animated sprite
+        self.walking = False
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.hitpoints = 100 #use this later
         self.bullets = pg.sprite.Group()
         self.rect.center = (x,y)
+
+    def load_images(self):
+        self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32), 
+                                self.spritesheet.get_image(32,0, 32, 32)]
+
+    def animate(self):
+        now = pg.time.get_ticks()
+        if now - self.last_update > 350:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
+            bottom = self.rect.bottom
+            self.image = self.standing_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+
+    # def load_images(self):
+    #     self.standing_frames = [self.spritesheet.get_image(0, 0, 32, 32),
+    #                             self.spritesheet.get_image(32, 0, 32, 32)]
+    #     for frame in self.standing_frames:
+    #         frame.set_colorkey(BLACK)
+    #     self.walk_frames_r = [self.spritesheet.get_image(678, 860, 120, 201),
+    #                           self.spritesheet.get_image(692, 1458, 120, 207)]
+    #     self.walk_frames_l = []
+    #     for frame in self.walk_frames_r:
+    #         frame.set_colorkey(BLACK)
+    #         self.walk_frames_l.append(pg.transform.flip(frame, True, False))
+    #     self.jump_frame = self.spritesheet.get_image(256, 0, 128, 128)
+    #     self.jump_frame.set_colorkey(BLACK)
 
     # def events(self):
     #     for event in pg.event.get():
@@ -151,6 +205,8 @@ class Player(pg.sprite.Sprite):
         self.rect.width = self.rect.width
         self.rect.height = self.rect.height
         self.collide_with_enemy(self.game.enemy, True, "enemy")
+        self.animate()
+        self.get_keys()
         
 #------------------------------------------------------------------------
     # CREATE A WALL CLASS
