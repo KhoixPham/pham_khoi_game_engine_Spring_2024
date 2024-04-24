@@ -56,10 +56,10 @@ class Game:
             y = random.randint(0, 24)
             Enemy(self, x, y) # giving x and y the value to the enemy that is spawned
         num_powerup_to_spawn = 0
-        if self.wave_counter == 10:
-            num_powerup_to_spawn += 1
+        if self.wave_counter == 1: #makes the powerup at wave 5
+            num_powerup_to_spawn += 1 #spawns a powerup
             for _ in range (num_powerup_to_spawn):
-                x = random.randint(0,32)
+                x = random.randint(0,30)
                 y = random.randint(0,24)
                 PowerUp(self,x,y)
 

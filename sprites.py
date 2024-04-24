@@ -175,6 +175,7 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "powerup":
             self.status = "Infinite Bullets"
+            #sets a different player status | similar to creative mode / survival / adventure
         if self.status == "Infinite Bullets":
             #print("okay")
             x,y = pg.mouse.get_pos()
@@ -183,6 +184,7 @@ class Player(pg.sprite.Sprite):
             self.game.all_sprites.add(bullet)
             self.bullets.add(bullet)
             bullets.append(bullet)
+            # spawns a chain of bullets
                 
             
         
@@ -377,6 +379,7 @@ class Bullet(Player):
 
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
+        #print(self.rect.x)
 
         #Previous
         #self.rect.x = self.rect.x + int(self.dx)
@@ -394,6 +397,15 @@ class Bullet(Player):
         # self.rect.y += self.dy
         self.move()
         self.collide_with_enemy(self.game.enemy, True, 'enemy')
+        if self.rect.x > 1024:
+            self.kill()
+        if self.rect.y > 768:
+            self.kill()
+        if self.rect.x < -100:
+            self.kill()
+        if self.rect.y < -100:
+            self.kill()
+        
 
 #-----------------------------------------------------------------------------------------------------
 
