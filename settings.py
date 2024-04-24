@@ -26,3 +26,4 @@ BLACK = (0,0,0)
 #BULLETS
 BULLET_SPEED = 100
 bullets = []
+POWER_UP_EFFECTS = ["Infinite Bullets"]

@@ -51,6 +51,8 @@ class Player(pg.sprite.Sprite):
         self.hitpoints = 100 #use this later
         self.bullets = pg.sprite.Group()
         self.rect.center = (x,y)
+        self.powerup = PowerUp
+        self.status = ""
 
     def load_images(self):
         self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32), 
@@ -169,14 +171,25 @@ class Player(pg.sprite.Sprite):
                 self.rect.y = self.y
 
 # FROM MR. COZORT's CODE
-    def collide_with_obj(self, group, kill, desc):
+    def collide_with_powerup(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
-        if hits:
-            if str(hits[0].__class__.__name__) == "Coin": 
-                print("I got a coin")
+        if hits and desc == "powerup":
+            self.status = "Infinite Bullets"
+        if self.status == "Infinite Bullets":
+            #print("okay")
+            x,y = pg.mouse.get_pos()
+                #print (x,y)
+            bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, x, y, 5)  # Adjust direction as needed
+            self.game.all_sprites.add(bullet)
+            self.bullets.add(bullet)
+            bullets.append(bullet)
+                
+            
+        
+    
+            # if str(hits[0].__class__.__name__) == "powerup": 
+            #     print("oadjfa")
 
-
-            #if hits
         
         #if hits and desc == "coin":
             #self.rect = self.image.get_rect()
@@ -184,7 +197,7 @@ class Player(pg.sprite.Sprite):
     def collide_with_enemy(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "enemy":
-            self.rect = self.image.get_rect()
+            self.rect
 
 
  
@@ -201,7 +214,7 @@ class Player(pg.sprite.Sprite):
         self.rect.y = self.y
         #ADD Y COLLISION
         self.collide_with_walls ('y')
-        self.collide_with_obj(self.game.coins, True, "coin")
+        self.collide_with_powerup(self.game.powerup, True, "powerup")
         self.rect.width = self.rect.width
         self.rect.height = self.rect.height
         self.collide_with_enemy(self.game.enemy, True, "enemy")
@@ -226,6 +239,14 @@ class Wall(Sprite):
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
 
+    # def collide_with_bullet(self, group, kill, desc):
+    #     hits = pg.sprite.spritecollide(self, group, kill, desc)
+    #     if hits and desc == "bullets":
+    #         print("hello")
+    # killing the bullets
+
+    def update(self):
+        self.collide_with_bullet(self.game.bullets, True, bullets)
 #------------------------------------------------------------------------
         #CREATE A COIN CLASS
 
@@ -335,12 +356,13 @@ class Bullet(Player):
     def __init__(self, game, x, y, targetx, targety, speed):
         super().__init__(game, x, y) # super allows access to methods and properties of a parent or sibling class
         self.game = game
+        self.groups = game.all_sprites, game.bullets
         self.image = pg.Surface((16, 16))
         self.image.fill((YELLOW))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
-        print('Angle in degrees:', angle*180/math.pi)
+        #print('Angle in degrees:', angle*180/math.pi)
         self.dx = math.cos(angle) * speed
         self.dy = math.sin(angle) * speed
         self.x = x
@@ -372,3 +394,19 @@ class Bullet(Player):
         # self.rect.y += self.dy
         self.move()
         self.collide_with_enemy(self.game.enemy, True, 'enemy')
+
+#-----------------------------------------------------------------------------------------------------
+
+class PowerUp(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.powerup
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = self.x * TILESIZE
+        self.rect.y = self.y * TILESIZE

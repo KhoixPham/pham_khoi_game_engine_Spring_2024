@@ -8,6 +8,9 @@ from sprites import *
 from os import path
 import random
 
+#BETA GOALS:
+    # GAMEPLAY: BOSS BATTLE
+    # POWER UPS (SPEED INCREASE / MACHiNE GUN)
 # Three things I want to add:
 # Projectiles / bullets
 # ENdless survival
@@ -28,6 +31,7 @@ class Game:
         self.load_data()
         self.wave_counter = 0 #this marks our initial value | allows the 'Game' object to have attribute to wave_counter
         self.enemy_spawned = 0 #game starts with 0 enemies
+        self.powerup_spawned = 0
 
          # load save game data etc
     def load_data(self):
@@ -43,13 +47,22 @@ class Game:
     
 # def new_wave is from AI
 # My own Comments
+
     def new_wave(self):
         self.wave_counter += 1 # += operator makes it easier to add a value to an existing variable
         num_enemies_to_spawn = 1 + (self.wave_counter - 1) * 1 # add one extra enemy per wave
         for _ in range(num_enemies_to_spawn): #spawns the enemy
-            x = random.randint(0, 64 - TILESIZE)
-            y = random.randint(0, 56 - TILESIZE)
+            x = random.randint(0,32)
+            y = random.randint(0, 24)
             Enemy(self, x, y) # giving x and y the value to the enemy that is spawned
+        num_powerup_to_spawn = 0
+        if self.wave_counter == 10:
+            num_powerup_to_spawn += 1
+            for _ in range (num_powerup_to_spawn):
+                x = random.randint(0,32)
+                y = random.randint(0,24)
+                PowerUp(self,x,y)
+
         
  
     def new(self):
@@ -58,6 +71,8 @@ class Game:
         self.walls = pg.sprite.Group()
         self.coins = pg.sprite.Group()
         self.enemy = pg.sprite.Group()
+        self.powerup = pg.sprite.Group()
+        self.bullets = pg.sprite.Group()
         #self.player = Player(self, 10, 10)
         #for x in range(10,20):
                # Wall(self, x, 5)
@@ -98,22 +113,22 @@ class Game:
                 self.new_wave()
         
     #DRAW GRID
-    def draw_grid(self):
-        for x in range(0,WIDTH, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
-        for y in range(0, WIDTH, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
+    # def draw_grid(self):
+    #     for x in range(0,WIDTH, TILESIZE):
+    #         pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
+    #     for y in range(0, WIDTH, TILESIZE):
+    #         pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
     
     #Draw text
     def draw_text(self):
         font = pg.font.Font(None, 36)
         wave_text = font.render(f"Wave: {self.wave_counter}", True, YELLOW) # the f is called an f-string | this displays self.wave_counter and its value after evaluation
-        self.screen.blit(wave_text, (83,84)) #draws the text at specific coordinate
+        self.screen.blit(wave_text, (42,47)) #draws the text at specific coordinate
 
     #Define the draw method / OUTPUT
     def draw(self):
         self.screen.fill(BGCOLOR)
-        self.draw_grid()
+        #self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text()
         pg.display.flip()
@@ -125,7 +140,7 @@ class Game:
                 self.quit()
             if event.type == pg.MOUSEBUTTONDOWN:
                 x,y = pg.mouse.get_pos()
-                print (x,y)
+                #print (x,y)
                 bullet = Bullet(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 5)  # Adjust direction as needed
                 self.player.game.all_sprites.add(bullet)
                 self.player.bullets.add(bullet)
