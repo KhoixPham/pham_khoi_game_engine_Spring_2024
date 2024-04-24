@@ -245,8 +245,8 @@ class Wall(Sprite):
     #         print("hello")
     # killing the bullets
 
-    def update(self):
-        self.collide_with_bullet(self.game.bullets, True, bullets)
+    # def update(self):
+    #     self.collide_with_bullet(self.game.bullets, True, bullets)
 #------------------------------------------------------------------------
         #CREATE A COIN CLASS
 
