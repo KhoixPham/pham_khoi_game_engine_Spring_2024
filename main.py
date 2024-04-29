@@ -145,12 +145,12 @@ class Game:
                 self.player.bullets.add(bullet)
                 bullets.append(bullet) #stores the bullet in a list | a list store multiple items in a single variable
 
-                bullet2 = Bullet2(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 6)  # Adjust direction as needed
+                bullet2 = Bullet2(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 5)  # Adjust direction as needed
                 self.player.game.all_sprites.add(bullet2)
                 self.player.bullets.add(bullet2)
                 bullets.append(bullet2) #stores the bullet in a list | a list store multiple items in a single variable
 
-                bullet3 = Bullet3(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 4)  # Adjust direction as needed
+                bullet3 = Bullet3(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 5)  # Adjust direction as needed
                 self.player.game.all_sprites.add(bullet2)
                 self.player.bullets.add(bullet2)
                 bullets.append(bullet2) #stores the bullet in a list | a list store multiple items in a single variable

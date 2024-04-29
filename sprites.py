@@ -424,17 +424,17 @@ class Bullet2(Player):
         self.rect.center = (x, y)
         angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
         #print('Angle in degrees:', angle*180/math.pi)
-        self.dx = math.cos(angle) * speed
-        self.dy = math.sin(angle) * speed
+        angle2 = angle + 0.2
+        self.dx = math.cos(angle2) * speed
+        self.dy = math.sin(angle2) * speed
         self.x = x
         self.y = y
-    
     #movement with bullet
     def move(self):
         # self.x and self.y are floats (decimals), i get better accuracy
         #IF I change self.x and and then convert them into integers for the rectangle
-        self.x = self.x + self.dx + 1
-        self.y = self.y + self.dy + 1
+        self.x = self.x + self.dx
+        self.y = self.y + self.dy
 
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
@@ -478,8 +478,9 @@ class Bullet3(Player):
         self.rect.center = (x, y)
         angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
         #print('Angle in degrees:', angle*180/math.pi)
-        self.dx = math.cos(angle) * speed
-        self.dy = math.sin(angle) * speed
+        angle3 = angle - 0.2
+        self.dx = math.cos(angle3) * speed
+        self.dy = math.sin(angle3) * speed
         self.x = x
         self.y = y
     
@@ -487,8 +488,8 @@ class Bullet3(Player):
     def move(self):
         # self.x and self.y are floats (decimals), i get better accuracy
         #IF I change self.x and and then convert them into integers for the rectangle
-        self.x = self.x + self.dx - 1
-        self.y = self.y + self.dy - 1
+        self.x = self.x + self.dx 
+        self.y = self.y + self.dy
 
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
