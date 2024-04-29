@@ -201,7 +201,7 @@ class Player(pg.sprite.Sprite):
     def collide_with_enemy(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "enemy":
-            self.rect
+            pass
 
 
  
@@ -225,7 +225,7 @@ class Player(pg.sprite.Sprite):
         self.animate()
         self.get_keys()
         if self.powerup_timer is not None and pg.time.get_ticks() - self.powerup_timer >= 5000:
-            self.status = ""  # Reset status back to normal
+            self.status = "Triple Shot"
             self.powerup_timer = None  # Reset the timer
         
 #------------------------------------------------------------------------
