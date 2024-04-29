@@ -53,6 +53,7 @@ class Player(pg.sprite.Sprite):
         self.rect.center = (x,y)
         self.powerup = PowerUp
         self.status = ""
+        self.powerup_timer = None
 
     def load_images(self):
         self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32), 
@@ -174,7 +175,8 @@ class Player(pg.sprite.Sprite):
     def collide_with_powerup(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "powerup":
-            self.status = "Infinite Bullets"
+            self.status = "Infinite Bullets" 
+            self.start_powerup_timer() #AI
             #sets a different player status | similar to creative mode / survival / adventure
         if self.status == "Infinite Bullets":
             #print("okay")
@@ -184,11 +186,11 @@ class Player(pg.sprite.Sprite):
             self.game.all_sprites.add(bullet)
             self.bullets.add(bullet)
             bullets.append(bullet)
-            # spawns a chain of bullets
-                
-            
-        
-    
+
+    def start_powerup_timer(self):
+        #AI
+         # Set powerup timer 
+        self.powerup_timer = pg.time.get_ticks()
             # if str(hits[0].__class__.__name__) == "powerup": 
             #     print("oadjfa")
 
@@ -222,6 +224,9 @@ class Player(pg.sprite.Sprite):
         self.collide_with_enemy(self.game.enemy, True, "enemy")
         self.animate()
         self.get_keys()
+        if self.powerup_timer is not None and pg.time.get_ticks() - self.powerup_timer >= 5000:
+            self.status = ""  # Reset status back to normal
+            self.powerup_timer = None  # Reset the timer
         
 #------------------------------------------------------------------------
     # CREATE A WALL CLASS
@@ -406,6 +411,113 @@ class Bullet(Player):
         if self.rect.y < -100:
             self.kill()
         
+#_____________________________________________________________________________________________________
+
+class Bullet2(Player):
+    def __init__(self, game, x, y, targetx, targety, speed):
+        super().__init__(game, x, y) # super allows access to methods and properties of a parent or sibling class
+        self.game = game
+        self.groups = game.all_sprites, game.bullets
+        self.image = pg.Surface((16, 16))
+        self.image.fill((YELLOW))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
+        #print('Angle in degrees:', angle*180/math.pi)
+        self.dx = math.cos(angle) * speed
+        self.dy = math.sin(angle) * speed
+        self.x = x
+        self.y = y
+    
+    #movement with bullet
+    def move(self):
+        # self.x and self.y are floats (decimals), i get better accuracy
+        #IF I change self.x and and then convert them into integers for the rectangle
+        self.x = self.x + self.dx + 1
+        self.y = self.y + self.dy + 1
+
+        self.rect.x = int(self.x)
+        self.rect.y = int(self.y)
+        #print(self.rect.x)
+
+        #Previous
+        #self.rect.x = self.rect.x + int(self.dx)
+        #self.rect.y = self.rect.x + int(self.dy)
+
+    #Make bullets kill enemies
+    def collide_with_enemy(self, group, kill, desc):
+        hits = pg.sprite.spritecollide(self, group, kill)
+        if hits and desc == "enemy":
+            self.rect = self.image.get_rect()
+    
+
+    def update(self):
+        # self.rect.x += self.dx
+        # self.rect.y += self.dy
+        self.move()
+        self.collide_with_enemy(self.game.enemy, True, 'enemy')
+        if self.rect.x > 1024:
+            self.kill()
+        if self.rect.y > 768:
+            self.kill()
+        if self.rect.x < -100:
+            self.kill()
+        if self.rect.y < -100:
+            self.kill()
+
+#-----------------------------------------------------------------------------------------------------
+
+class Bullet3(Player):
+    def __init__(self, game, x, y, targetx, targety, speed):
+        super().__init__(game, x, y) # super allows access to methods and properties of a parent or sibling class
+        self.game = game
+        self.groups = game.all_sprites, game.bullets
+        self.image = pg.Surface((16, 16))
+        self.image.fill((YELLOW))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
+        #print('Angle in degrees:', angle*180/math.pi)
+        self.dx = math.cos(angle) * speed
+        self.dy = math.sin(angle) * speed
+        self.x = x
+        self.y = y
+    
+    #movement with bullet
+    def move(self):
+        # self.x and self.y are floats (decimals), i get better accuracy
+        #IF I change self.x and and then convert them into integers for the rectangle
+        self.x = self.x + self.dx - 1
+        self.y = self.y + self.dy - 1
+
+        self.rect.x = int(self.x)
+        self.rect.y = int(self.y)
+        #print(self.rect.x)
+
+        #Previous
+        #self.rect.x = self.rect.x + int(self.dx)
+        #self.rect.y = self.rect.x + int(self.dy)
+
+    #Make bullets kill enemies
+    def collide_with_enemy(self, group, kill, desc):
+        hits = pg.sprite.spritecollide(self, group, kill)
+        if hits and desc == "enemy":
+            self.rect = self.image.get_rect()
+    
+
+    def update(self):
+        # self.rect.x += self.dx
+        # self.rect.y += self.dy
+        self.move()
+        self.collide_with_enemy(self.game.enemy, True, 'enemy')
+        if self.rect.x > 1024:
+            self.kill()
+        if self.rect.y > 768:
+            self.kill()
+        if self.rect.x < -100:
+            self.kill()
+        if self.rect.y < -100:
+            self.kill()
 
 #-----------------------------------------------------------------------------------------------------
 

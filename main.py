@@ -56,13 +56,12 @@ class Game:
             y = random.randint(0, 24)
             Enemy(self, x, y) # giving x and y the value to the enemy that is spawned
         num_powerup_to_spawn = 0
-        if self.wave_counter == 1: #makes the powerup at wave 5
+        if self.wave_counter == 5: #makes the powerup at wave 5
             num_powerup_to_spawn += 1 #spawns a powerup
             for _ in range (num_powerup_to_spawn):
-                x = random.randint(0,30)
+                x = random.randint(0,34)
                 y = random.randint(0,24)
                 PowerUp(self,x,y)
-
         
  
     def new(self):
@@ -145,6 +144,16 @@ class Game:
                 self.player.game.all_sprites.add(bullet)
                 self.player.bullets.add(bullet)
                 bullets.append(bullet) #stores the bullet in a list | a list store multiple items in a single variable
+
+                bullet2 = Bullet2(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 6)  # Adjust direction as needed
+                self.player.game.all_sprites.add(bullet2)
+                self.player.bullets.add(bullet2)
+                bullets.append(bullet2) #stores the bullet in a list | a list store multiple items in a single variable
+
+                bullet3 = Bullet3(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 4)  # Adjust direction as needed
+                self.player.game.all_sprites.add(bullet2)
+                self.player.bullets.add(bullet2)
+                bullets.append(bullet2) #stores the bullet in a list | a list store multiple items in a single variable
     
                 
                
@@ -152,7 +161,7 @@ class Game:
             #     if event.key == pg.K_LEFT:
             #         self.player.move(dx=-1)
             #     if event.key == pg.K_RIGHT:
-            #         self.player.move(dx=1)
+            #         self.player.move(dx=1)w
             #     if event.key == pg.K_UP:
             #         self.player.move(dy=-1)
             #     if event.key == pg.K_DOWN:
