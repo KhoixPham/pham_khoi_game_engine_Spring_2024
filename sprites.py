@@ -186,6 +186,19 @@ class Player(pg.sprite.Sprite):
             self.game.all_sprites.add(bullet)
             self.bullets.add(bullet)
             bullets.append(bullet)
+        if self.status == "Infinite Bullets x3":
+            bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, x, y, 5)  # Adjust direction as needed
+            self.game.all_sprites.add(bullet)
+            self.bullets.add(bullet)
+            bullets.append(bullet)
+            bullet = Bullet2(self.game, self.rect.centerx, self.rect.centery, x, y, 5)  # Adjust direction as needed
+            self.game.all_sprites.add(bullet)
+            self.bullets.add(bullet)
+            bullets.append(bullet)
+            bullet = Bullet3(self.game, self.rect.centerx, self.rect.centery, x, y, 5)  # Adjust direction as needed
+            self.game.all_sprites.add(bullet)
+            self.bullets.add(bullet)
+            bullets.append(bullet)
 
     def start_powerup_timer(self):
         #AI
@@ -312,37 +325,21 @@ class Enemy(Sprite):
                 self.vy = -self.vy  # Reverse the direction
 
     def update(self):
-        # Store the current position (rect)
-        current_rect = self.rect.copy()
-
-        # Update position based on velocity
-        self.rect.x += self.vx * self.game.dt
-        self.rect.y += self.vy * self.game.dt
-
-        # Check for collision with other enemies
-        enemy_collisions = pg.sprite.spritecollide(self, self.groups[1], False)
-        for enemy in enemy_collisions:
-            if enemy != self:
-                # Revert to previous position
-                self.rect = current_rect
-                self.vx = -self.vx
-                self.vy = -self.vy
-
-        # Follow player | Mr. Cozort
-        if self.rect.x < self.game.player.rect.x:
-            self.vx = ENEMY_SPEED
-        elif self.rect.x > self.game.player.rect.x:
-            self.vx = -ENEMY_SPEED
-        else:
-            self.vx = 0
-
-        if self.rect.y < self.game.player.rect.y:
-            self.vy = ENEMY_SPEED
-        elif self.rect.y > self.game.player.rect.y:
-            self.vy = -ENEMY_SPEED
-        else:
-            self.vy = 0
-
+        #AI , From Tyler
+        # Calculates direction vector to player and makes it follow player's center
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        # Normalizes the direction vector and scales the boss by speed
+        if direction.length() > 0:
+            self.vx, self.vy = direction.normalize() * 300
+ 
+# multiplies velocity by delta time
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        #self.collide_with_walls('x')
+        self.rect.y = self.y
+        #self.collide_with_walls('y')
+        # dies when hitpoints are gone
         # Apply wall collision
         # self.collide_with_walls('x')
         # self.collide_with_walls('y')

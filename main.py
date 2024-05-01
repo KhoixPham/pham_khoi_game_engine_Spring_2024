@@ -9,8 +9,11 @@ from os import path
 import random
 
 #BETA GOALS:
-    # GAMEPLAY: BOSS BATTLE
     # POWER UPS (SPEED INCREASE / MACHiNE GUN)
+#FINAL GOAL:
+# GAMEPLAY: BOSS BATTLE 
+
+
 # Three things I want to add:
 # Projectiles / bullets
 # ENdless survival
@@ -56,7 +59,7 @@ class Game:
             y = random.randint(0, 24)
             Enemy(self, x, y) # giving x and y the value to the enemy that is spawned
         num_powerup_to_spawn = 0
-        if self.wave_counter in [5,15,24,30]: #makes the powerup at wave 5
+        if self.wave_counter in [5,15,24,30, 35, 40, 45, 50, 55,60, 65, 70, 75, 80, 90]: #makes the powerup at wave 5
             num_powerup_to_spawn += 1 #spawns a powerup
             for _ in range (num_powerup_to_spawn):
                 spawn_area = 32
@@ -159,7 +162,7 @@ class Game:
                     self.player.game.all_sprites.add(bullet2)
                     self.player.bullets.add(bullet2)
                     bullets.append(bullet2) #stores the bullet in a list | a list store multiple items in a single variable
-    
+        
                 
                
             # if event.type == pg.KEYDOWN:
