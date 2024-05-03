@@ -60,17 +60,17 @@ class Game:
                 x = random.randint(0,32)
                 y = random.randint(0, 24)
                 if (x,y) not in self.player.rect.center:
-                    break
+                    break #do not spawn in the player / Copilot
             Enemy(self, x, y) # giving x and y the value to the enemy that is spawned
         num_powerup_to_spawn = 0
-        if self.wave_counter in [5,15,24,30, 35, 40, 45, 50, 55,60, 65, 70, 75, 80, 90]: #makes the powerup at wave 5
+        if self.wave_counter in [5,15,24,30, 35, 40, 45, 50, 55,60, 65, 70, 75, 80, 90]: #Spawns powerups at these waves
             num_powerup_to_spawn += 1 #spawns a powerup
             for _ in range (num_powerup_to_spawn):
                 spawn_area = 30
-                spawn_areay = 22
-                x = random.randint(1,spawn_area)
+                spawn_areay = 22 # Wall's coordinates are 30x22
+                x = random.randint(1,spawn_area) 
                 y = random.randint(1,spawn_areay)
-                PowerUp(self,x,y)
+                PowerUp(self,x,y) #powerup starts from 1 in the x and 1 in the y to 30,22
         num_triple_to_spawn = 0
         if self.wave_counter in [30, 35, 40, 50]:
             num_triple_to_spawn += 1

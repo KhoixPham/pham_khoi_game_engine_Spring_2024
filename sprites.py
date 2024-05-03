@@ -48,12 +48,12 @@ class Player(pg.sprite.Sprite):
         self.walking = False
         self.x = x * TILESIZE
         self.y = y * TILESIZE
-        self.hitpoints = 100 #use this later
+        self.hitpoints = 20 #use this later
         self.bullets = pg.sprite.Group()
         self.rect.center = (x,y)
         self.powerup = PowerUp
         self.status = ""
-        self.powerup_timer = None
+        self.powerup_timer = None #allows the player to have access to these variables
         self.triple_timer = None
 
     def load_images(self):
@@ -250,13 +250,15 @@ class Player(pg.sprite.Sprite):
         self.collide_with_triple(self.game.triple, True, "triple")
         self.animate()
         self.get_keys()
-        if self.powerup_timer is not None and pg.time.get_ticks() - self.powerup_timer >= 5000:
+        if self.powerup_timer is not None and pg.time.get_ticks() - self.powerup_timer >= 5000: #5 Seconds
             self.status = "Triple Shot"
             self.powerup_timer = None  # Reset the timer
         if self.triple_timer is not None and pg.time.get_ticks() - self.triple_timer >= 3000:
-            self.status = "Infinite Bullets"
-            self.start_powerup_timer() 
-            self.triple_timer = None
+            self.status = "Infinite Bullets" #After 3, switches to "Infinite Bullets"
+            self.start_powerup_timer() #Starts the infinite timer powerup
+            self.triple_timer = None # Reset the timer
+
+            #Goes from 3 to infinite to normal triple shot
             
 
         
@@ -440,7 +442,7 @@ class Bullet2(Player):
         self.rect.center = (x, y)
         angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
         #print('Angle in degrees:', angle*180/math.pi)
-        angle2 = angle + 0.2
+        angle2 = angle + 0.2 # For triple shot, goes up when clicked instead of straight
         self.dx = math.cos(angle2) * speed
         self.dy = math.sin(angle2) * speed
         self.x = x
@@ -494,7 +496,7 @@ class Bullet3(Player):
         self.rect.center = (x, y)
         angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
         #print('Angle in degrees:', angle*180/math.pi)
-        angle3 = angle - 0.2
+        angle3 = angle - 0.2 #For triple shot, the bullet goes towards the downward direction when clicked
         self.dx = math.cos(angle3) * speed
         self.dy = math.sin(angle3) * speed
         self.x = x
