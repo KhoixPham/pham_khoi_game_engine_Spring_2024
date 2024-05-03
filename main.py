@@ -35,6 +35,7 @@ class Game:
         self.wave_counter = 0 #this marks our initial value | allows the 'Game' object to have attribute to wave_counter
         self.enemy_spawned = 0 #game starts with 0 enemies
         self.powerup_spawned = 0
+        self.triple_spawn = 0
 
          # load save game data etc
     def load_data(self):
@@ -55,20 +56,33 @@ class Game:
         self.wave_counter += 1 # += operator makes it easier to add a value to an existing variable
         num_enemies_to_spawn = 1 + (self.wave_counter - 1) * 1 # add one extra enemy per wave
         for _ in range(num_enemies_to_spawn): #spawns the enemy
-            x = random.randint(0,32)
-            y = random.randint(0, 24)
+            while True:
+                x = random.randint(0,32)
+                y = random.randint(0, 24)
+                if (x,y) not in self.player.rect.center:
+                    break
             Enemy(self, x, y) # giving x and y the value to the enemy that is spawned
         num_powerup_to_spawn = 0
         if self.wave_counter in [5,15,24,30, 35, 40, 45, 50, 55,60, 65, 70, 75, 80, 90]: #makes the powerup at wave 5
             num_powerup_to_spawn += 1 #spawns a powerup
             for _ in range (num_powerup_to_spawn):
                 spawn_area = 32
-                spawn_areay = 28
+                spawn_areay = 24
                 max_x = spawn_area - 1
                 max_y = spawn_areay 
-                x = random.randint(1,max_x)
-                y = random.randint(1,max_y)
+                wall_coordinates = (31,23)
+                #Copilot / fixed coordinates
+                while True:
+                    x = random.randint(0,max_x)
+                    y = random.randint(0,max_y)
+                    if (x,y) not in wall_coordinates:
+                        break
                 PowerUp(self,x,y)
+        num_triple_to_spawn = 0
+        if self.wave_counter in [30, 35, 40, 50]:
+            num_triple_to_spawn += 1
+            for _ in range (num_triple_to_spawn):
+                TriplePowerup(self, 20, 20)
         
  
     def new(self):
@@ -79,6 +93,7 @@ class Game:
         self.enemy = pg.sprite.Group()
         self.powerup = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
+        self.triple = pg.sprite.Group()
         #self.player = Player(self, 10, 10)
         #for x in range(10,20):
                # Wall(self, x, 5)

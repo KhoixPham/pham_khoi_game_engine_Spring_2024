@@ -176,7 +176,7 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "powerup":
             self.status = "Infinite Bullets" 
-            self.start_powerup_timer() #AI
+            self.start_powerup_timer() #Powerup timer is from AI
             #sets a different player status | similar to creative mode / survival / adventure
         if self.status == "Infinite Bullets":
             #print("okay")
@@ -186,7 +186,13 @@ class Player(pg.sprite.Sprite):
             self.game.all_sprites.add(bullet)
             self.bullets.add(bullet)
             bullets.append(bullet)
+    
+    def collide_with_triple (self, group, kill, desc):
+        hits = pg.sprite.spritecollide(self, group, kill)
+        if hits and desc == "triple":
+            self.status = "Infinite Bullets x3"
         if self.status == "Infinite Bullets x3":
+            x,y = pg.mouse.get_pos()
             bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, x, y, 5)  # Adjust direction as needed
             self.game.all_sprites.add(bullet)
             self.bullets.add(bullet)
@@ -199,6 +205,7 @@ class Player(pg.sprite.Sprite):
             self.game.all_sprites.add(bullet)
             self.bullets.add(bullet)
             bullets.append(bullet)
+
 
     def start_powerup_timer(self):
         #AI
@@ -235,6 +242,7 @@ class Player(pg.sprite.Sprite):
         self.rect.width = self.rect.width
         self.rect.height = self.rect.height
         self.collide_with_enemy(self.game.enemy, True, "enemy")
+        self.collide_with_triple(self.game.triple, True, "triple")
         self.animate()
         self.get_keys()
         if self.powerup_timer is not None and pg.time.get_ticks() - self.powerup_timer >= 5000:
@@ -328,7 +336,7 @@ class Enemy(Sprite):
         #AI , From Tyler
         # Calculates direction vector to player and makes it follow player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
-        # Normalizes the direction vector and scales the boss by speed
+        # Normalizes the direction vector and scales the enemy by speed
         if direction.length() > 0:
             self.vx, self.vy = direction.normalize() * 300
  
@@ -527,6 +535,18 @@ class PowerUp(Sprite):
         self.image = pg.Surface((TILESIZE, TILESIZE))
         self.image.fill(RED)
         self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = self.x * TILESIZE
+        self.rect.y = self.y * TILESIZE
+
+class TriplePowerup(Sprite):
+    def __init__(self,game,x,y):
+        self.groups = game.all_sprites, game.triple
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(PINK)
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
