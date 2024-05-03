@@ -54,6 +54,7 @@ class Player(pg.sprite.Sprite):
         self.powerup = PowerUp
         self.status = ""
         self.powerup_timer = None
+        self.triple_timer = None
 
     def load_images(self):
         self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32), 
@@ -191,6 +192,7 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "triple":
             self.status = "Infinite Bullets x3"
+            self.start_triple_timer()
         if self.status == "Infinite Bullets x3":
             x,y = pg.mouse.get_pos()
             bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, x, y, 5)  # Adjust direction as needed
@@ -217,6 +219,9 @@ class Player(pg.sprite.Sprite):
         
         #if hits and desc == "coin":
             #self.rect = self.image.get_rect()
+    
+    def start_triple_timer(self):
+        self.triple_timer = pg.time.get_ticks()
 
     def collide_with_enemy(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
@@ -248,6 +253,12 @@ class Player(pg.sprite.Sprite):
         if self.powerup_timer is not None and pg.time.get_ticks() - self.powerup_timer >= 5000:
             self.status = "Triple Shot"
             self.powerup_timer = None  # Reset the timer
+        if self.triple_timer is not None and pg.time.get_ticks() - self.triple_timer >= 3000:
+            self.status = "Infinite Bullets"
+            self.start_powerup_timer() 
+            self.triple_timer = None
+            
+
         
 #------------------------------------------------------------------------
     # CREATE A WALL CLASS

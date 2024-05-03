@@ -66,17 +66,10 @@ class Game:
         if self.wave_counter in [5,15,24,30, 35, 40, 45, 50, 55,60, 65, 70, 75, 80, 90]: #makes the powerup at wave 5
             num_powerup_to_spawn += 1 #spawns a powerup
             for _ in range (num_powerup_to_spawn):
-                spawn_area = 32
-                spawn_areay = 24
-                max_x = spawn_area - 1
-                max_y = spawn_areay 
-                wall_coordinates = (31,23)
-                #Copilot / fixed coordinates
-                while True:
-                    x = random.randint(0,max_x)
-                    y = random.randint(0,max_y)
-                    if (x,y) not in wall_coordinates:
-                        break
+                spawn_area = 30
+                spawn_areay = 22
+                x = random.randint(1,spawn_area)
+                y = random.randint(1,spawn_areay)
                 PowerUp(self,x,y)
         num_triple_to_spawn = 0
         if self.wave_counter in [30, 35, 40, 50]:
