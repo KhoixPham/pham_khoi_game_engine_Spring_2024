@@ -228,9 +228,6 @@ class Player(pg.sprite.Sprite):
         if hits and desc == "enemy":
             pass
 
-
- 
-
     def update(self):
         #self.rect.x = self.vx * TILESIZE
         #self.rect.y = self.vy * TILESIZE
@@ -392,6 +389,7 @@ class Bullet(Player):
         self.dy = math.sin(angle) * speed
         self.x = x
         self.y = y
+        self.game.boss.hitpoints = 25
     
     #movement with bullet
     def move(self):
@@ -414,11 +412,24 @@ class Bullet(Player):
         if hits and desc == "enemy":
             self.rect = self.image.get_rect()
     
+    def collide_with_boss(self, group, desc):
+        hits = pg.sprite.spritecollide(self, group, False)  # Change True to False
+        if hits and desc == "bosses":
+            # Check if the boss sprite's hit points reach zero
+            self.game.boss.hitpoints -= 1
+            print("yeah")
+            if self.game.boss.hitpoints <= 0:
+                # Remove the boss sprite when hit points reach zero
+                for boss in hits:
+                    boss.kill()
+
+
 
     def update(self):
         # self.rect.x += self.dx
         # self.rect.y += self.dy
         self.move()
+        self.collide_with_boss(self.game.boss,'bosses')
         self.collide_with_enemy(self.game.enemy, True, 'enemy')
         if self.rect.x > 1024:
             self.kill()
@@ -467,13 +478,25 @@ class Bullet2(Player):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "enemy":
             self.rect = self.image.get_rect()
-    
+
+    def collide_with_boss(self, group, desc):
+        hits = pg.sprite.spritecollide(self, group, False)  # Change True to False
+        if hits and desc == "bosses":
+            # Check if the boss sprite's hit points reach zero
+            self.game.boss.hitpoints -= 1
+            print("yeah")
+            if self.game.boss.hitpoints <= 0:
+                # Remove the boss sprite when hit points reach zero
+                for boss in hits:
+                    boss.kill()
+
 
     def update(self):
         # self.rect.x += self.dx
         # self.rect.y += self.dy
         self.move()
         self.collide_with_enemy(self.game.enemy, True, 'enemy')
+        self.collide_with_boss(self.game.boss, 'bosses')
         if self.rect.x > 1024:
             self.kill()
         if self.rect.y > 768:
@@ -523,11 +546,22 @@ class Bullet3(Player):
         if hits and desc == "enemy":
             self.rect = self.image.get_rect()
     
+    def collide_with_boss(self, group, desc):
+        hits = pg.sprite.spritecollide(self, group, False)  # Change True to False
+        if hits and desc == "bosses":
+            # Check if the boss sprite's hit points reach zero
+            self.game.boss.hitpoints -= 1
+            print("yeah")
+            if self.game.boss.hitpoints <= 0:
+                # Remove the boss sprite when hit points reach zero
+                for boss in hits:
+                    boss.kill()
 
     def update(self):
         # self.rect.x += self.dx
         # self.rect.y += self.dy
         self.move()
+        self.collide_with_boss(self.game.boss, 'boss')
         self.collide_with_enemy(self.game.enemy, True, 'enemy')
         if self.rect.x > 1024:
             self.kill()
@@ -565,3 +599,39 @@ class TriplePowerup(Sprite):
         self.y = y
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
+
+#-------------------------------------------------------------------------------------------------------------------
+
+class Boss(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.boss
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((128, 128))
+      # self.image.fill(PURPLE)
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.vx = 200
+        self.vy = 200
+        self.hitpoints = 500
+        self.status = ''
+
+
+    def update(self):
+        #AI , From Tyler
+        # Calculates direction vector to player and makes it follow player's center
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        # Normalizes the direction vector and scales the enemy by speed
+        if direction.length() > 0:
+            self.vx, self.vy = direction.normalize() * 150
+ 
+# multiplies velocity by delta time
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        #self.collide_with_walls('x')
+        self.rect.y = self.y
