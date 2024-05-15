@@ -65,7 +65,7 @@ class Game:
             Enemy(self, x, y) # giving x and y the value to the enemy that is spawned
             
         num_powerup_to_spawn = 0
-        if self.wave_counter in [5,15,24,30, 35, 40, 45,55,60, 65, 70, 75, 80, 90]: #Spawns powerups at these waves
+        if self.wave_counter in [1,5,15,24,30, 35, 40, 45,55,60, 65, 70, 75, 80, 90]: #Spawns powerups at these waves
             num_powerup_to_spawn += 1 #spawns a powerup
             for _ in range (num_powerup_to_spawn):
                 spawn_area = 30
@@ -79,7 +79,7 @@ class Game:
             for _ in range (num_triple_to_spawn):
                 TriplePowerup(self, 20, 20)
         boss_spawn = 0
-        if self.wave_counter == 7:
+        if self.wave_counter in [6, 16, 25, 27, 30, 40]:
             boss_spawn +=1
             for _ in range (boss_spawn):
                 Boss(self, 1,1)

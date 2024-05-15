@@ -11,6 +11,7 @@ SPRITESHEET = "theBell.png"
 game_folder = path.dirname(__file__)
 img_folder = path.join(game_folder, 'images')
 # create a player class
+bosses = []
 
 class Spritesheet:
     # utility class for loading and parsing spritesheets
@@ -48,7 +49,7 @@ class Player(pg.sprite.Sprite):
         self.walking = False
         self.x = x * TILESIZE
         self.y = y * TILESIZE
-        self.hitpoints = 20 #use this later
+        self.hitpoints = 500 #use this later
         self.bullets = pg.sprite.Group()
         self.rect.center = (x,y)
         self.powerup = PowerUp
@@ -227,6 +228,13 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "enemy":
             pass
+    
+    def collide_with_bosses(self, group, desc):
+        hits = pg.sprite.spritecollide(self, group, False)
+        if hits and desc == "bosses":
+            self.hitpoints -= 1
+        if self.hitpoints == 0:
+            self.kill()
 
     def update(self):
         #self.rect.x = self.vx * TILESIZE
@@ -241,6 +249,7 @@ class Player(pg.sprite.Sprite):
         #ADD Y COLLISION
         self.collide_with_walls ('y')
         self.collide_with_powerup(self.game.powerup, True, "powerup")
+        self.collide_with_bosses(self.game.boss, "bosses")
         self.rect.width = self.rect.width
         self.rect.height = self.rect.height
         self.collide_with_enemy(self.game.enemy, True, "enemy")
@@ -389,7 +398,6 @@ class Bullet(Player):
         self.dy = math.sin(angle) * speed
         self.x = x
         self.y = y
-        self.game.boss.hitpoints = 25
     
     #movement with bullet
     def move(self):
@@ -412,15 +420,16 @@ class Bullet(Player):
         if hits and desc == "enemy":
             self.rect = self.image.get_rect()
     
+
+    # Modified from CoPilot
     def collide_with_boss(self, group, desc):
         hits = pg.sprite.spritecollide(self, group, False)  # Change True to False
         if hits and desc == "bosses":
             # Check if the boss sprite's hit points reach zero
-            self.game.boss.hitpoints -= 1
-            print("yeah")
-            if self.game.boss.hitpoints <= 0:
-                # Remove the boss sprite when hit points reach zero
-                for boss in hits:
+            for boss in hits:
+                boss.hitpoints -= 5
+                if boss.hitpoints <= 0:
+                    # Remove the boss sprite when hit points reach zero
                     boss.kill()
 
 
@@ -483,11 +492,10 @@ class Bullet2(Player):
         hits = pg.sprite.spritecollide(self, group, False)  # Change True to False
         if hits and desc == "bosses":
             # Check if the boss sprite's hit points reach zero
-            self.game.boss.hitpoints -= 1
-            print("yeah")
-            if self.game.boss.hitpoints <= 0:
-                # Remove the boss sprite when hit points reach zero
-                for boss in hits:
+            for boss in hits:
+                boss.hitpoints -= 5
+                if boss.hitpoints <= 0:
+                    # Remove the boss sprite when hit points reach zero
                     boss.kill()
 
 
@@ -524,7 +532,7 @@ class Bullet3(Player):
         self.dy = math.sin(angle3) * speed
         self.x = x
         self.y = y
-    
+
     #movement with bullet
     def move(self):
         # self.x and self.y are floats (decimals), i get better accuracy
@@ -550,13 +558,11 @@ class Bullet3(Player):
         hits = pg.sprite.spritecollide(self, group, False)  # Change True to False
         if hits and desc == "bosses":
             # Check if the boss sprite's hit points reach zero
-            self.game.boss.hitpoints -= 1
-            print("yeah")
-            if self.game.boss.hitpoints <= 0:
-                # Remove the boss sprite when hit points reach zero
-                for boss in hits:
+            for boss in hits:
+                boss.hitpoints -= 5
+                if boss.hitpoints <= 0:
+                    # Remove the boss sprite when hit points reach zero
                     boss.kill()
-
     def update(self):
         # self.rect.x += self.dx
         # self.rect.y += self.dy
@@ -617,18 +623,21 @@ class Boss(Sprite):
         self.y = y * TILESIZE
         self.vx = 200
         self.vy = 200
-        self.hitpoints = 500
+        self.hitpoints = 50000
         self.status = ''
-
+        self.cd = 5000
 
     def update(self):
         #AI , From Tyler
         # Calculates direction vector to player and makes it follow player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
         # Normalizes the direction vector and scales the enemy by speed
-        if direction.length() > 0:
-            self.vx, self.vy = direction.normalize() * 150
- 
+    
+        if direction.length() > 0 and not self.cd > pg.time.get_ticks():
+            self.vx, self.vy = direction.normalize() * 150 # From James
+        if self.cd < pg.time.get_ticks():
+            self.vx, self.vy = direction.normalize()* 500
+            self.cd = pg.time.get_ticks() + 1000
 # multiplies velocity by delta time
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
