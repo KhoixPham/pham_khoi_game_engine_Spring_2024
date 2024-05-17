@@ -11,7 +11,6 @@ SPRITESHEET = "theBell.png"
 game_folder = path.dirname(__file__)
 img_folder = path.join(game_folder, 'images')
 # create a player class
-bosses = []
 
 class Spritesheet:
     # utility class for loading and parsing spritesheets
@@ -613,19 +612,26 @@ class Boss(Sprite):
         self.groups = game.all_sprites, game.boss
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((128, 128))
+        self.image = pg.Surface((132, 132))
       # self.image.fill(PURPLE)
         self.image.fill(RED)
-        self.rect = self.image.get_rect()
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
+        self.rect = self.image.get_rect(center=(x,y))
+        self.rect.center = (x,y)
+        self.x = x
+        self.y = y
         self.vx = 200
         self.vy = 200
-        self.hitpoints = 50000
+        self.hitpoints = 1000000
         self.status = ''
         self.cd = 5000
+        self.segments = []
+        self.spawn_segments(25)
+
+    def spawn_segments(self, num_segments):
+        for _ in range(num_segments):
+            segment = BossSegment(self.game, self.x, self.y)
+            self.segments.append(segment)
+            self.game.all_sprites.add(segment)
 
     def update(self):
         #AI , From Tyler
@@ -638,9 +644,44 @@ class Boss(Sprite):
         if self.cd < pg.time.get_ticks():
             self.vx, self.vy = direction.normalize()* 500
             self.cd = pg.time.get_ticks() + 1000
+        # print(self.rect.center)
+        #From ChatGPT
+        for i, segment in enumerate(self.segments):
+            if i == 0:
+                segment.update_position(self.rect.center)  # Pass the center of the boss
+            else:
+                previous_segment = self.segments[i - 1]
+                segment.update_position(previous_segment.rect.center)  # Update subsequent segments' position to the previous segment's center
+
 # multiplies velocity by delta time
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
         #self.collide_with_walls('x')
         self.rect.y = self.y
+
+#----------------------------------------------------------------------------------------------------------------
+
+#From ChatGPT | Modified vx, vy + added hitpoints
+class BossSegment(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.boss
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((100, 100))
+        self.image.fill(RED) 
+        self.rect = self.image.get_rect(center=(x, y))
+        self.x = x
+        self.y = y
+        self.hitpoints = 250000
+        self.cd = 5000
+        self.vx = 5
+        self.vy = 5
+
+    def update_position(self, boss_center):
+        direction = pg.math.Vector2(boss_center) - pg.math.Vector2(self.rect.center)
+        if direction.length() > 0:
+            direction.normalize()  # Normalize the direction vector
+            # Update the segment's position based on the direction vector
+            self.rect.centerx += direction.x * self.vx * self.game.dt
+            self.rect.centery += direction.y * self.vy * self.game.dt

@@ -79,10 +79,10 @@ class Game:
             for _ in range (num_triple_to_spawn):
                 TriplePowerup(self, 20, 20)
         boss_spawn = 0
-        if self.wave_counter in [6, 16, 25, 27, 30, 40]:
+        if self.wave_counter in [1, 16, 25, 27, 30, 40]:
             boss_spawn +=1
             for _ in range (boss_spawn):
-                Boss(self, 1,1)
+                Boss(self, 16,16)
 
         
  
@@ -168,6 +168,7 @@ class Game:
                 self.player.game.all_sprites.add(bullet)
                 self.player.bullets.add(bullet)
                 bullets.append(bullet) #stores the bullet in a list | a list store multiple items in a single variable
+                
 
                 if self.player.status == "Triple Shot":
                     bullet2 = Bullet2(self.player.game, self.player.rect.centerx, self.player.rect.centery, x, y, 5)  # Adjust direction as needed
