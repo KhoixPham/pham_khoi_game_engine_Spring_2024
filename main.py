@@ -27,6 +27,7 @@ from math import floor
 class Game:
     def __init__(self):
         pg.init()
+        pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
@@ -42,6 +43,7 @@ class Game:
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'images')
+        self.snd_folder = path.join(game_folder, 'sounds')
         self.player_img = pg.image.load(path.join(img_folder, 'saitama.png')).convert_alpha()
         self.enemy_img = pg.image.load(path.join(img_folder, 'garou.png')).convert_alpha()
         self.coin_img = pg.image.load(path.join(img_folder, 'coin.png')).convert_alpha()
@@ -79,8 +81,11 @@ class Game:
             for _ in range (num_triple_to_spawn):
                 TriplePowerup(self, 20, 20)
         boss_spawn = 0
-        if self.wave_counter in [1, 16, 25, 27, 30, 40]:
+        if self.wave_counter in [2]:
             boss_spawn +=1
+            if boss_spawn == 1:
+                pg.mixer.music.load(path.join(self.snd_folder, "boss_music.mp3")) #boss_music is from the game Terraria, specifically from a mod call the Calamity Mod; Made by DOKURO: https://www.youtube.com/watch?v=opvuEVpl_PM
+                pg.mixer.music.play(loops=-1) # When boss spawns, play the music.
             for _ in range (boss_spawn):
                 Boss(self, 16,16)
 
@@ -134,6 +139,7 @@ class Game:
             self.enemy_spawned += 1 #spawns the enemy
             if self.enemy_spawned >= 1:
                 self.new_wave()
+    
         
     #DRAW GRID
     # def draw_grid(self):

@@ -623,9 +623,12 @@ class Boss(Sprite):
         self.vy = 200
         self.hitpoints = 1000000
         self.status = ''
-        self.cd = 5000
+        self.cd = 8500
         self.segments = []
-        self.spawn_segments(25)
+        self.spawn_segments(27)
+        self.bullet = []
+        self.spawn_time = pg.time.get_ticks()
+
 
     def spawn_segments(self, num_segments):
         for _ in range(num_segments):
@@ -637,13 +640,14 @@ class Boss(Sprite):
         #AI , From Tyler
         # Calculates direction vector to player and makes it follow player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        elapsed_time = pg.time.get_ticks() - self.spawn_time
         # Normalizes the direction vector and scales the enemy by speed
     
-        if direction.length() > 0 and not self.cd > pg.time.get_ticks():
+        if direction.length() > 0 and not self.cd > elapsed_time:
             self.vx, self.vy = direction.normalize() * 150 # From James
-        if self.cd < pg.time.get_ticks():
-            self.vx, self.vy = direction.normalize()* 500
-            self.cd = pg.time.get_ticks() + 1000
+        if self.cd < elapsed_time:
+            self.vx, self.vy = direction.normalize()* 1250
+            self.cd = pg.time.get_ticks() + 2000
         # print(self.rect.center)
         #From ChatGPT
         for i, segment in enumerate(self.segments):
@@ -668,13 +672,13 @@ class BossSegment(Sprite):
         self.groups = game.all_sprites, game.boss
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((100, 100))
+        self.image = pg.Surface((75, 75))
         self.image.fill(RED) 
         self.rect = self.image.get_rect(center=(x, y))
         self.x = x
         self.y = y
         self.hitpoints = 250000
-        self.cd = 5000
+        self.cd = 10000
         self.vx = 5
         self.vy = 5
 
