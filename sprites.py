@@ -48,7 +48,7 @@ class Player(pg.sprite.Sprite):
         self.walking = False
         self.x = x * TILESIZE
         self.y = y * TILESIZE
-        self.hitpoints = 500 #use this later
+        self.hitpoints = 10000 #use this later
         self.bullets = pg.sprite.Group()
         self.rect.center = (x,y)
         self.powerup = PowerUp
@@ -172,11 +172,10 @@ class Player(pg.sprite.Sprite):
                 self.vy = 0
                 self.rect.y = self.y
 
-# FROM MR. COZORT's CODE
     def collide_with_powerup(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "powerup":
-            self.status = "Infinite Bullets" 
+            self.status = "Infinite Bullets"
             self.start_powerup_timer() #Powerup timer is from AI
             #sets a different player status | similar to creative mode / survival / adventure
         if self.status == "Infinite Bullets":
@@ -213,15 +212,11 @@ class Player(pg.sprite.Sprite):
         #AI
          # Set powerup timer 
         self.powerup_timer = pg.time.get_ticks()
-            # if str(hits[0].__class__.__name__) == "powerup": 
-            #     print("oadjfa")
-
-        
-        #if hits and desc == "coin":
-            #self.rect = self.image.get_rect()
+        # Basically gets the exact time the when the player collided with the sprite
     
     def start_triple_timer(self):
         self.triple_timer = pg.time.get_ticks()
+        # Basically gets the exact time the when the player collided with the sprite
 
     def collide_with_enemy(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
@@ -255,8 +250,8 @@ class Player(pg.sprite.Sprite):
         self.collide_with_triple(self.game.triple, True, "triple")
         self.animate()
         self.get_keys()
-        if self.powerup_timer is not None and pg.time.get_ticks() - self.powerup_timer >= 5000: #5 Seconds
-            self.status = "Triple Shot"
+        if self.powerup_timer is not None and pg.time.get_ticks() - self.powerup_timer >= 5000: # 5 seconds
+            self.status = "Triple Shot" #sets to a different status
             self.powerup_timer = None  # Reset the timer
         if self.triple_timer is not None and pg.time.get_ticks() - self.triple_timer >= 3000:
             self.status = "Infinite Bullets" #After 3, switches to "Infinite Bullets"
@@ -461,7 +456,7 @@ class Bullet2(Player):
         self.rect.center = (x, y)
         angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
         #print('Angle in degrees:', angle*180/math.pi)
-        angle2 = angle + 0.2 # For triple shot, goes up when clicked instead of straight
+        angle2 = angle + 0.2 # For triple shot, goes left of the middle bullet
         self.dx = math.cos(angle2) * speed
         self.dy = math.sin(angle2) * speed
         self.x = x
@@ -526,7 +521,7 @@ class Bullet3(Player):
         self.rect.center = (x, y)
         angle = math.atan2(targety-y, targetx-x) #calculate angle in radians / rise over run (targety-y, targetx-x) | atan = arc tangent
         #print('Angle in degrees:', angle*180/math.pi)
-        angle3 = angle - 0.2 #For triple shot, the bullet goes towards the downward direction when clicked
+        angle3 = angle - 0.2 #For triple shot, the bullet goes right of the middle bullet
         self.dx = math.cos(angle3) * speed
         self.dy = math.sin(angle3) * speed
         self.x = x
@@ -625,13 +620,13 @@ class Boss(Sprite):
         self.status = ''
         self.cd = 8500
         self.segments = []
-        self.spawn_segments(27)
+        self.spawn_segments(27) # The length of the boss
         self.bullet = []
         self.spawn_time = pg.time.get_ticks()
 
 
     def spawn_segments(self, num_segments):
-        for _ in range(num_segments):
+        for _ in range(num_segments): # spawns the number of segments
             segment = BossSegment(self.game, self.x, self.y)
             self.segments.append(segment)
             self.game.all_sprites.add(segment)
@@ -639,23 +634,23 @@ class Boss(Sprite):
     def update(self):
         #AI , From Tyler
         # Calculates direction vector to player and makes it follow player's center
-        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
-        elapsed_time = pg.time.get_ticks() - self.spawn_time
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center) #pg.math.vector is used to represent direction, positions, velocities, forces.
+        elapsed_time = pg.time.get_ticks() - self.spawn_time # The time the bosses spawn
         # Normalizes the direction vector and scales the enemy by speed
     
-        if direction.length() > 0 and not self.cd > elapsed_time:
-            self.vx, self.vy = direction.normalize() * 150 # From James
-        if self.cd < elapsed_time:
+        if direction.length() > 0 and not self.cd > elapsed_time: # check not on cooldown is greater than elapsed_time
+            self.vx, self.vy = direction.normalize() * 150 # movement
+        if self.cd < elapsed_time: # From James | changed pg.game.get_ticks to elapsed_time
             self.vx, self.vy = direction.normalize()* 1250
             self.cd = pg.time.get_ticks() + 2000
         # print(self.rect.center)
         #From ChatGPT
-        for i, segment in enumerate(self.segments):
-            if i == 0:
+        for i, segment in enumerate(self.segments): # goes through the segment list
+            if i == 0: # Checks if the first segment is 0
                 segment.update_position(self.rect.center)  # Pass the center of the boss
             else:
-                previous_segment = self.segments[i - 1]
-                segment.update_position(previous_segment.rect.center)  # Update subsequent segments' position to the previous segment's center
+                previous_segment = self.segments[i - 1] # Anything segment the first segment
+                segment.update_position(previous_segment.rect.center)  # Update segments' position to the previous segment's center
 
 # multiplies velocity by delta time
         self.x += self.vx * self.game.dt
@@ -683,7 +678,7 @@ class BossSegment(Sprite):
         self.vy = 5
 
     def update_position(self, boss_center):
-        direction = pg.math.Vector2(boss_center) - pg.math.Vector2(self.rect.center)
+        direction = pg.math.Vector2(boss_center) - pg.math.Vector2(self.rect.center) #pg.math.vector is used to represent direction, positions, velocities, forces.
         if direction.length() > 0:
             direction.normalize()  # Normalize the direction vector
             # Update the segment's position based on the direction vector
